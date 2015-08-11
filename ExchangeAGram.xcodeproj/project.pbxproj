@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		639391ED1B6695DA00EAC982 /* FeedItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 639391EC1B6695DA00EAC982 /* FeedItem.swift */; };
 		63DA617E1B411249002420B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63DA617D1B411249002420B2 /* AppDelegate.swift */; };
 		63DA61811B411249002420B2 /* ExchangeAGram.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 63DA617F1B411249002420B2 /* ExchangeAGram.xcdatamodeld */; };
 		63DA61861B411249002420B2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63DA61841B411249002420B2 /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		639391EC1B6695DA00EAC982 /* FeedItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FeedItem.swift; path = ../FeedItem.swift; sourceTree = "<group>"; };
 		63DA61781B411249002420B2 /* ExchangeAGram.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ExchangeAGram.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63DA617C1B411249002420B2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		63DA617D1B411249002420B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				63DA617D1B411249002420B2 /* AppDelegate.swift */,
 				63DA61A01B4114AD002420B2 /* FeedViewController.swift */,
 				63DA61A21B425F88002420B2 /* FeedCell.swift */,
+				639391EC1B6695DA00EAC982 /* FeedItem.swift */,
 				63DA61841B411249002420B2 /* Main.storyboard */,
 				63DA61871B411249002420B2 /* Images.xcassets */,
 				63DA61891B411249002420B2 /* LaunchScreen.xib */,
@@ -225,6 +228,7 @@
 				63DA617E1B411249002420B2 /* AppDelegate.swift in Sources */,
 				63DA61A31B425F88002420B2 /* FeedCell.swift in Sources */,
 				63DA61A11B4114AD002420B2 /* FeedViewController.swift in Sources */,
+				639391ED1B6695DA00EAC982 /* FeedItem.swift in Sources */,
 				63DA61811B411249002420B2 /* ExchangeAGram.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
