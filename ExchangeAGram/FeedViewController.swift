@@ -59,7 +59,7 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
             cameraController.allowsEditing = false
             self.presentViewController(cameraController, animated: true, completion: nil)
         }
-        else if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera) {
+        else if UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.PhotoLibrary) {
             
             var photoLibraryController = UIImagePickerController()
             photoLibraryController.delegate = self
@@ -99,8 +99,11 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         //y lo guardamos por último
         (UIApplication.sharedApplication().delegate as! AppDelegate).saveContext()
         
+        feedArray.append(feedItem)
         
         self.dismissViewControllerAnimated(true, completion: nil)
+        
+        self.collectionView.reloadData()
     }
     
     
