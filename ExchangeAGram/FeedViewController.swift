@@ -130,4 +130,21 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         
         return cell
     }
+    
+    //UICollectionViewDelegate: lo que vamos a hacer aquí es que se nos abra el FilterViewController cuando hagamos click en una imagen.
+    
+    
+    // La siguiente función se ejecuta cuando tocamos en un elemento del CollectionView.
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let thisItem = feedArray[indexPath.row] as! FeedItem //generamos un let con el elemento seleccionado
+        
+        //ahora mandamos ese "thisItem" a nuestro FilterViewController
+        var filterVC = FilterViewController()
+        filterVC.thisFeedItem = thisItem
+        
+        //estamos en una NavigationContorllerStack y queremos mandar la vista al FilterViewController:
+        self.navigationController?.pushViewController(filterVC, animated: false)
+    }
+    
+    
 }
