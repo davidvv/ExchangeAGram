@@ -16,6 +16,8 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     var collectionView: UICollectionView!
     
     let kIntensity = 0.7 //El valor sepia
+    
+    var context:CIContext = CIContext(options: nil)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,11 +74,11 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         let noir = CIFilter(name: "CIPhotoEffectNoir")
         
-        let transfer CIFilter(name: "CIPhotoEffectTransfer")
+        let transfer = CIFilter(name: "CIPhotoEffectTransfer")
             
         let unsharpen = CIFilter(name: "CIPhotoUnsharpMask")
         
-        let monocrome = CIFilter(name: "CIColorMonochrome")
+        let monochrome = CIFilter(name: "CIColorMonochrome")
         
         let colorContorls = CIFilter(name: "CIColorcontrols")
         colorContorls.setValue(0.5, forKey: kCIInputSaturationKey) //cambia la saturación a 0.5. El valor puede cambiar entre 0 y 1
@@ -93,12 +95,31 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         let composite = CIFilter(name: "CIHardLightBlendMode")
         composite.setValue(sepia.outputImage, forKey: kCIInputImageKey) //lo que hago es aplicar el filtro sepia que he creado, y a la imagen que sale, le aplico el CIHardLightBlendMode
         
+        //podemos incluso combinar tres veces:
+        let vignette = CIFilter(name: "CIVignette")
+        vignette.setValue(composite.outputImage, forKey: kCIInputImageKey)
+        vignette.setValue(kIntensity * 2, forKey: kCIInputIntensityKey)
+        vignette.setValue(kIntensity * 30, forKey: kCIInputRadiusKey)
         
-
-        
-        return []
+        return [blur, instant, noir, transfer, unsharpen, monochrome, colorContorls, sepia, colorClamp, composite, vignette]
     }
     
+    func filteredImageFromImage (imageData: NSData, filter: CIFilter) -> UIImage {
+        // vamos a crear una instancia bastante "cara", así que será una constante. Se encarga de hacer el proceso del filtro en una imagen. Se trata de una CIContextInstance (la vamos a crear como Property dentro de FilterViewController. La segunda va a ser una CIImage, que va a tener todos los datos de imagen, y luego la convertiremos en UIImage
+        
+    
+        
+        //lo primero que haremos será convertir nuestros datos en CIImage:
+        let unfilteredImage = CIImage(data: imageData) //el imageData viene de nuestro FeedItem
+        filter.setValue(unfilteredImage, forKey: kCIInputImageKey) //le pasamos un filtro
+        let filteredImage: CIImage = filter.outputImage
+        
+        let extent = filteredImage.extent() //extent() nos da un rectangulo del tamaño de la filteredImage
+        let cgImage:CGImageRef = context.createCGImage(filteredImage, fromRect: extent) //genera una imagen optimizada del tamaño de extent basandose en la imagen filtrada
+        let finalImage = UIImage(CGImage: cgImage) //la convierte en UIImage
+        
+        return finalImage!
+    }
     
     
     
