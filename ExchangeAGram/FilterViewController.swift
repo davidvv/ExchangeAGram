@@ -72,7 +72,48 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     
     //Helper Function
     
-    func photoFilters() -> [CIFilter] {
+//    func photoFilters() -> [CIFilter] {
+//        
+//        let blur = CIFilter(name: "CIGaussianBlur")
+//        
+//        let instant = CIFilter(name: "CIPhotoEffectInstant")
+//        
+//        let noir = CIFilter(name: "CIPhotoEffectNoir")
+//        
+//        let transfer = CIFilter(name: "CIPhotoEffectTransfer")
+//            
+//        let unsharpen = CIFilter(name: "CIPhotoUnsharpMask")
+//        
+//        let monochrome = CIFilter(name: "CIColorMonochrome")
+//        
+////        let colorContorls = CIFilter(name: "CIColorcontrols")
+////        colorContorls.setValue(0.5, forKey: kCIInputSaturationKey) //cambia la saturación a 0.5. El valor puede cambiar entre 0 y 1
+//        
+//        let sepia = CIFilter(name: "CISepiaTone")
+//        sepia.setValue(kIntensity, forKey: kCIInputIntensityKey)
+//        
+//        let colorClamp = CIFilter(name: "CIColorClamp")
+//        colorClamp.setValue(CIVector(x: 0.9, y: 0.9, z: 0.9, w: 0.9), forKey: "InputMaxComponents")
+//        colorClamp.setValue(CIVector(x: 0.2, y: 0.2, z: 0.2, w: 0.2), forKey: "inputMinComponents")
+//        //he actuado sobre los máximos y minimos valores posibles del RGB
+//        
+//        //Hacemos un filtro compuesto:
+//        let composite = CIFilter(name: "CIHardLightBlendMode")
+//        composite.setValue(sepia.outputImage, forKey: kCIInputImageKey) //lo que hago es aplicar el filtro sepia que he creado, y a la imagen que sale, le aplico el CIHardLightBlendMode
+//        
+//        //podemos incluso combinar tres veces:
+//        let vignette = CIFilter(name: "CIVignette")
+//        vignette.setValue(composite.outputImage, forKey: kCIInputImageKey)
+//        vignette.setValue(kIntensity * 2, forKey: kCIInputIntensityKey)
+//        vignette.setValue(kIntensity * 30, forKey: kCIInputRadiusKey)
+//        
+//        return [blur, instant, noir, transfer, unsharpen, monochrome, /*colorContorls,*/ sepia, colorClamp, composite, vignette]
+//    }
+    
+    
+    //he comentado mi código porque mis comentarios están ahí y pueden ser interesantes. He debido escribir el nombre de algun filtro mal, por lo que me da error. Copio y pego el código de Eliot:
+    
+    func photoFilters () -> [CIFilter] {
         
         let blur = CIFilter(name: "CIGaussianBlur")
         
@@ -81,33 +122,39 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         let noir = CIFilter(name: "CIPhotoEffectNoir")
         
         let transfer = CIFilter(name: "CIPhotoEffectTransfer")
-            
-        let unsharpen = CIFilter(name: "CIPhotoUnsharpMask")
+        
+        let unsharpen = CIFilter(name: "CIUnsharpMask")
         
         let monochrome = CIFilter(name: "CIColorMonochrome")
         
-        let colorContorls = CIFilter(name: "CIColorcontrols")
-        colorContorls.setValue(0.5, forKey: kCIInputSaturationKey) //cambia la saturación a 0.5. El valor puede cambiar entre 0 y 1
+        let colorControls = CIFilter(name: "CIColorControls")
+        
+        colorControls.setValue(0.5, forKey: kCIInputSaturationKey)
         
         let sepia = CIFilter(name: "CISepiaTone")
+        
         sepia.setValue(kIntensity, forKey: kCIInputIntensityKey)
         
         let colorClamp = CIFilter(name: "CIColorClamp")
-        colorClamp.setValue(CIVector(x: 0.9, y: 0.9, z: 0.9, w: 0.9), forKey: "InputMaxComponents")
+        
+        colorClamp.setValue(CIVector(x: 0.9, y: 0.9, z: 0.9, w: 0.9), forKey: "inputMaxComponents")
+        
         colorClamp.setValue(CIVector(x: 0.2, y: 0.2, z: 0.2, w: 0.2), forKey: "inputMinComponents")
-        //he actuado sobre los máximos y minimos valores posibles del RGB
         
-        //Hacemos un filtro compuesto:
         let composite = CIFilter(name: "CIHardLightBlendMode")
-        composite.setValue(sepia.outputImage, forKey: kCIInputImageKey) //lo que hago es aplicar el filtro sepia que he creado, y a la imagen que sale, le aplico el CIHardLightBlendMode
         
-        //podemos incluso combinar tres veces:
+        composite.setValue(sepia.outputImage, forKey: kCIInputImageKey)
+        
         let vignette = CIFilter(name: "CIVignette")
+        
         vignette.setValue(composite.outputImage, forKey: kCIInputImageKey)
+        
         vignette.setValue(kIntensity * 2, forKey: kCIInputIntensityKey)
+        
         vignette.setValue(kIntensity * 30, forKey: kCIInputRadiusKey)
         
-        return [blur, instant, noir, transfer, unsharpen, monochrome, colorContorls, sepia, colorClamp, composite, vignette]
+        return [blur, instant, noir, transfer, unsharpen, monochrome, colorControls, sepia, colorClamp, composite, vignette]
+        
     }
     
     func filteredImageFromImage (imageData: NSData, filter: CIFilter) -> UIImage {
