@@ -85,6 +85,7 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         //con esta let image podemos actualizar la UI. Pero antes, tenemos que ver como guardamos la imagen en CoreData
         
         let imageData = UIImageJPEGRepresentation(image, 1.0) //esto nos da una instancia de NSData (como pone en nuestro feedItem que tiene que ser la image
+        let thumbNailData = UIImageJPEGRepresentation(image, 0.1)
         
         //ahora creamos el feedItem
         
@@ -95,6 +96,7 @@ class FeedViewController: UIViewController, UICollectionViewDataSource, UICollec
         //por último configuramos el feedItem
         feedItem.image = imageData
         feedItem.caption = "test caption"
+        feedItem.thumbNail = thumbNailData
         
         //y lo guardamos por último
         (UIApplication.sharedApplication().delegate as! AppDelegate).saveContext()

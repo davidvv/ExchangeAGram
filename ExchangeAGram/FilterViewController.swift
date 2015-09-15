@@ -1,3 +1,4 @@
+
 //
 //  FilterViewController.swift
 //  ExchangeAGram
@@ -20,12 +21,18 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
     var context:CIContext = CIContext(options: nil)
     
     var filters:[CIFilter] = []
+    
+    let placeHolderImage = UIImage(named: "Placeholder")
+    
+    let tmp = NSTemporaryDirectory()
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         
+        //la collectionView anterior, la hicimos desde el Storyboard, ahora vamos a generar una enteramente con código.
         let layout = UICollectionViewFlowLayout() //se encarga de decir como se va a ordenar la UICollectionView
         layout.sectionInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10) //esto le da bordes a las celdas
         layout.itemSize = CGSize(width: 150.0, height: 150.0) //tamaño de cada celda
@@ -63,13 +70,61 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         
         let cell:FilterCell = collectionView.dequeueReusableCellWithReuseIdentifier("MyCell", forIndexPath: indexPath) as! FilterCell
         
-//        cell.imageView.image = UIImage(named: "Placeholder")
         
-        cell.imageView.image = filteredImageFromImage(thisFeedItem.image, filter: filters[indexPath.row])
+        cell.imageView.image = placeHolderImage
+        
+        //creamos una cola
+        let filterQueue:dispatch_queue_t = dispatch_queue_create("filter queue", nil)
+        //para decirle a la cola qué código corre en ella:
+        dispatch_async(filterQueue, { () -> Void in
+            //cogemos la imagen de la cache:
+            let filterImage = self.getCachedImage(indexPath.row)
+            
+            //mandamos a la linea principal la actualización de la interfaz, haciendo que se presente la imagen en la celda
+            dispatch_async(dispatch_get_main_queue(), { () -> Void in
+                cell.imageView.image = filterImage
+            })
+        })
+        
         
         return cell
     }
     
+    
+    //UICollectionViewDelegate
+    
+    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let filterImage = self.filteredImageFromImage(self.thisFeedItem.image, filter: self.filters[indexPath.row]) //aplicamos el filtro, sobre la imagen, la de verdad, no el thumbnail, porque queremos guardarla con buena calidad!
+        
+        //ahora necesitamos crear imageData:
+        let imageData = UIImageJPEGRepresentation(filterImage, 1.0)
+        
+        //y lo guardamos en nuestro "thisFeedItem
+        self.thisFeedItem.image = imageData
+        
+        //y tb creamos nuestro thumbNailData:
+        let thumbNailData = UIImageJPEGRepresentation(filterImage, 0.1)
+        
+        //y lo aplicamos a thisFeedItem:
+        self.thisFeedItem.thumbNail = thumbNailData
+        
+        //Guardamos en CoreData:
+        (UIApplication.sharedApplication().delegate as! AppDelegate).saveContext()
+        
+        //activamos la animación al mostrar el ViewController:
+        self.navigationController?.popViewControllerAnimated(true)
+        
+    }
+    
+    
+    func justHideComments() {
+        //creo una función solo para poder ocultar un montón de código que está comentado y no quiero ver
+        
+        
+        
+        
+        
+        
     //Helper Function
     
 //    func photoFilters() -> [CIFilter] {
@@ -109,7 +164,7 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
 //        
 //        return [blur, instant, noir, transfer, unsharpen, monochrome, /*colorContorls,*/ sepia, colorClamp, composite, vignette]
 //    }
-    
+    }
     
     //he comentado mi código porque mis comentarios están ahí y pueden ser interesantes. He debido escribir el nombre de algun filtro mal, por lo que me da error. Copio y pego el código de Eliot:
     
@@ -174,10 +229,36 @@ class FilterViewController: UIViewController, UICollectionViewDataSource, UIColl
         return finalImage!
     }
     
+    // caching functions
     
+    func cacheImage(imageNumber: Int) {
+        //imageNumber es el imagePath.row específico de cada imagen)
+        let fileName = "\(imageNumber)"
+        let uniquePath = tmp.stringByAppendingPathComponent(fileName)
+        
+        if !NSFileManager.defaultManager().fileExistsAtPath(fileName) { // ! significa "not", se llama "bang". Comprobamos si existe el archivo con ese nombre, en caso de que no, que es lo que estamos mirando, lo creamos:
+            
+            let data = self.thisFeedItem.thumbNail
+            let filter = self.filters[imageNumber]
+            let image = filteredImageFromImage(data, filter: filter)
+            UIImageJPEGRepresentation(image, 1.0).writeToFile(uniquePath, atomically: true)
+        }
+    }
     
-    
-    
+    func getCachedImage (imageNumber: Int) -> UIImage {
+        let fileName = "\(imageNumber)"
+        let uniquePath = tmp.stringByAppendingPathComponent(fileName)
+        
+        var image:UIImage
+        if NSFileManager.defaultManager().fileExistsAtPath(uniquePath) {
+            image = UIImage(contentsOfFile: uniquePath)! //si existe la caché, genera una imagen a partir de ella
+        } else {
+            self.cacheImage(imageNumber)
+            image = UIImage(contentsOfFile: uniquePath)! //si no existe la caché, genera una caché, y genera la imagen a partir de ella con la función que hemos creado justo antes
+        }
+        
+        return image
+    }
     
 
 }
